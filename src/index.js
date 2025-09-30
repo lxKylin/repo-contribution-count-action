@@ -11,34 +11,45 @@ async function run() {
     const badgeStyle = core.getInput('badge-style') || 'flat'
     const outputFormat = core.getInput('output-format') || 'markdown'
 
-    core.info('开始统计 PR 数量...')
+    core.info('开始统计贡献数量...')
 
     // 初始化 GitHub API 客户端
     const octokit = github.getOctokit(githubToken)
 
-    // 解析 PR 链接
+    // 解析链接以确定贡献类型
     const linksList = prLinks.split('\n').filter((link) => link.trim())
-    core.info(`发现 ${linksList.length} 个 PR 链接`)
+    core.info(`发现 ${linksList.length} 个链接`)
 
-    // 统计 PR 数量
+    // 检测链接类型
+    const isCommitLinks = linksList.some((link) =>
+      link.includes('/commits?author=')
+    )
+    const contributionType = isCommitLinks ? 'commits' : 'PRs'
+    core.info(`检测到贡献类型: ${contributionType}`)
+
+    // 统计贡献数量
     const prCounter = new PrCounter(octokit)
     const repoCounts = await prCounter.countPRsByRepository(linksList)
 
-    core.info('PR 统计完成:')
+    core.info(`${contributionType} 统计完成:`)
     for (const [repo, count] of Object.entries(repoCounts)) {
-      core.info(`${repo}: ${count} PRs`)
+      core.info(`${repo}: ${count} ${contributionType}`)
     }
 
     // 生成图标
     const badgeGenerator = new BadgeGenerator(badgeStyle)
-    const badges = badgeGenerator.generateBadges(repoCounts, outputFormat)
+    const badges = badgeGenerator.generateBadges(
+      repoCounts,
+      outputFormat,
+      contributionType
+    )
 
     // 生成摘要
-    const totalPRs = Object.values(repoCounts).reduce(
+    const totalContributions = Object.values(repoCounts).reduce(
       (sum, count) => sum + count,
       0
     )
-    const summary = `总计在 ${Object.keys(repoCounts).length} 个仓库中创建了 ${totalPRs} 个 PR`
+    const summary = `总计在 ${Object.keys(repoCounts).length} 个仓库中创建了 ${totalContributions} 个 ${contributionType}`
 
     // 设置输出
     core.setOutput('badges', badges)

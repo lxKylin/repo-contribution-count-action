@@ -1,10 +1,11 @@
 name: 'Repository PR Count Action'
-description: '统计用户在指定仓库中的 PR 数量并生成图标'
+name: 'Repository Contribution Count Action'
+description: '统计用户在指定仓库中的 PR 或 Commits 数量并生成图标'
 author: 'Kylin'
 
 inputs:
   pr-links:
-    description: 'PR 链接列表，用换行符分隔'
+    description: 'PR 链接或 Commits 链接列表，用换行符分隔'
     required: true
   github-token:
     description: 'GitHub token，用于访问 GitHub API'
@@ -22,9 +23,9 @@ outputs:
   badges:
     description: '生成的图标标记'
   summary:
-    description: 'PR 统计摘要'
+    description: '贡献统计摘要'
   repo-counts:
-    description: '各仓库 PR 数量的 JSON 格式'
+    description: '各仓库贡献数量的 JSON 格式'
 
 runs:
   using: 'node20'

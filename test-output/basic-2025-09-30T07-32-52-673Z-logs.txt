@@ -1,0 +1,5 @@
+[INFO] 发现 4 个 PR 链接
+[INFO] PR 统计完成:
+[INFO] vitejs/docs-cn: 31 PRs
+[INFO] vitest-dev/docs-cn: 40 PRs
+[INFO] element-plus/element-plus: 12 PRs

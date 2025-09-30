@@ -7,17 +7,23 @@ class BadgeGenerator {
   /**
    * 为单个仓库生成图标 URL
    * @param {string} repoName 仓库名
-   * @param {number} count PR 数量
+   * @param {number} count 贡献数量
+   * @param {string} type 贡献类型 ('commits' 或 'PRs')
    * @returns {string} 图标 URL
    */
-  generateBadgeUrl(repoName, count) {
-    // 对仓库名进行 URL 编码
-    const encodedRepoName = encodeURIComponent(repoName)
-    const label = encodedRepoName
-    const message = `${count} PRs`
+  generateBadgeUrl(repoName, count, type = 'PRs') {
+    // 使用 shields.io 的动态标签格式来解决特殊字符问题
+    // 格式: https://img.shields.io/static/v1?label=LABEL&message=MESSAGE&color=COLOR
     const color = this.getColorByCount(count)
 
-    return `${this.baseUrl}/${label}-${encodeURIComponent(message)}-${color}?style=${this.style}`
+    const params = new URLSearchParams({
+      label: repoName,
+      message: `${count} ${type}`,
+      color: color,
+      style: this.style
+    })
+
+    return `https://img.shields.io/static/v1?${params.toString()}`
   }
 
   /**
@@ -37,53 +43,64 @@ class BadgeGenerator {
   /**
    * 生成 Markdown 格式的图标
    * @param {string} repoName 仓库名
-   * @param {number} count PR 数量
+   * @param {number} count 贡献数量
+   * @param {string} type 贡献类型
    * @returns {string} Markdown 格式的图标
    */
-  generateMarkdownBadge(repoName, count) {
-    const badgeUrl = this.generateBadgeUrl(repoName, count)
+  generateMarkdownBadge(repoName, count, type = 'PRs') {
+    const badgeUrl = this.generateBadgeUrl(repoName, count, type)
     const repoUrl = `https://github.com/${repoName}`
-    return `[![${repoName} PRs](${badgeUrl})](${repoUrl})`
+    return `[![${repoName} ${type}](${badgeUrl})](${repoUrl})`
   }
 
   /**
    * 生成 HTML 格式的图标
    * @param {string} repoName 仓库名
-   * @param {number} count PR 数量
+   * @param {number} count 贡献数量
+   * @param {string} type 贡献类型
    * @returns {string} HTML 格式的图标
    */
-  generateHtmlBadge(repoName, count) {
-    const badgeUrl = this.generateBadgeUrl(repoName, count)
+  generateHtmlBadge(repoName, count, type = 'PRs') {
+    const badgeUrl = this.generateBadgeUrl(repoName, count, type)
     const repoUrl = `https://github.com/${repoName}`
-    return `<a href="${repoUrl}"><img src="${badgeUrl}" alt="${repoName} PRs"></a>`
+    return `<a href="${repoUrl}"><img src="${badgeUrl}" alt="${repoName} ${type}"></a>`
   }
 
   /**
    * 生成汇总图标
-   * @param {Object} repoCounts 仓库 PR 统计
+   * @param {Object} repoCounts 仓库贡献统计
+   * @param {string} type 贡献类型
    * @returns {string} 汇总图标的 URL
    */
-  generateSummaryBadge(repoCounts) {
-    const totalPRs = Object.values(repoCounts).reduce(
+  generateSummaryBadge(repoCounts, type = 'PRs') {
+    const total = Object.values(repoCounts).reduce(
       (sum, count) => sum + count,
       0
     )
     const repoCount = Object.keys(repoCounts).length
 
-    const label = 'Total PRs'
-    const message = `${totalPRs} in ${repoCount} repos`
-    const color = this.getColorByCount(totalPRs)
+    const label = `Total ${type}`
+    const message = `${total} in ${repoCount} repos`
+    const color = this.getColorByCount(total)
 
-    return `${this.baseUrl}/${encodeURIComponent(label)}-${encodeURIComponent(message)}-${color}?style=${this.style}`
+    const params = new URLSearchParams({
+      label: label,
+      message: message,
+      color: color,
+      style: this.style
+    })
+
+    return `https://img.shields.io/static/v1?${params.toString()}`
   }
 
   /**
    * 为所有仓库生成图标
-   * @param {Object} repoCounts 仓库 PR 统计
+   * @param {Object} repoCounts 仓库贡献统计
    * @param {string} format 输出格式 (markdown, html, json)
+   * @param {string} type 贡献类型
    * @returns {string|Object} 生成的图标内容
    */
-  generateBadges(repoCounts, format = 'markdown') {
+  generateBadges(repoCounts, format = 'markdown', type = 'PRs') {
     const badges = []
 
     // 为每个仓库生成图标
@@ -92,19 +109,19 @@ class BadgeGenerator {
 
       switch (format.toLowerCase()) {
         case 'html':
-          badge = this.generateHtmlBadge(repoName, count)
+          badge = this.generateHtmlBadge(repoName, count, type)
           break
         case 'json':
           badge = {
             repository: repoName,
             count: count,
-            badgeUrl: this.generateBadgeUrl(repoName, count),
+            badgeUrl: this.generateBadgeUrl(repoName, count, type),
             repoUrl: `https://github.com/${repoName}`
           }
           break
         case 'markdown':
         default:
-          badge = this.generateMarkdownBadge(repoName, count)
+          badge = this.generateMarkdownBadge(repoName, count, type)
           break
       }
 
@@ -113,11 +130,11 @@ class BadgeGenerator {
 
     // 添加汇总图标
     if (Object.keys(repoCounts).length > 1) {
-      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts)
+      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts, type)
 
       switch (format.toLowerCase()) {
         case 'html':
-          badges.unshift(`<img src="${summaryBadgeUrl}" alt="Total PRs">`)
+          badges.unshift(`<img src="${summaryBadgeUrl}" alt="Total ${type}">`)
           break
         case 'json':
           badges.unshift({
@@ -132,7 +149,7 @@ class BadgeGenerator {
           break
         case 'markdown':
         default:
-          badges.unshift(`![Total PRs](${summaryBadgeUrl})`)
+          badges.unshift(`![Total ${type}](${summaryBadgeUrl})`)
           break
       }
     }
@@ -151,27 +168,28 @@ class BadgeGenerator {
 
   /**
    * 生成自定义样式的表格格式图标
-   * @param {Object} repoCounts 仓库 PR 统计
+   * @param {Object} repoCounts 仓库贡献统计
+   * @param {string} type 贡献类型
    * @returns {string} Markdown 表格格式
    */
-  generateTableFormat(repoCounts) {
-    let table = '| 仓库 | PR 数量 | 图标 |\n'
+  generateTableFormat(repoCounts, type = 'PRs') {
+    let table = `| 仓库 | ${type} 数量 | 图标 |\n`
     table += '|------|---------|------|\n'
 
     for (const [repoName, count] of Object.entries(repoCounts)) {
-      const badgeUrl = this.generateBadgeUrl(repoName, count)
+      const badgeUrl = this.generateBadgeUrl(repoName, count, type)
       const repoUrl = `https://github.com/${repoName}`
       table += `| [${repoName}](${repoUrl}) | ${count} | ![${repoName}](${badgeUrl}) |\n`
     }
 
     // 添加汇总行
     if (Object.keys(repoCounts).length > 1) {
-      const totalPRs = Object.values(repoCounts).reduce(
+      const total = Object.values(repoCounts).reduce(
         (sum, count) => sum + count,
         0
       )
-      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts)
-      table += `| **总计** | **${totalPRs}** | ![Total](${summaryBadgeUrl}) |\n`
+      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts, type)
+      table += `| **总计** | **${total}** | ![Total](${summaryBadgeUrl}) |\n`
     }
 
     return table

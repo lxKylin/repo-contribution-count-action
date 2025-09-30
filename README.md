@@ -1,15 +1,15 @@
-# Repository PR Count Action
+# Repository Contribution Count Action
 
-一个用于统计用户在指定仓库中 PR 数量并生成图标的 GitHub Action。
+一个用于统计用户在指定仓库中 PR 或 Commits 数量并生成图标的 GitHub Action。
 
 ## 功能特性
 
-- 📊 统计用户在多个仓库中的 PR 数量
+- 📊 统计用户在多个仓库中的 PR 或 Commits 数量
 - 🎨 生成美观的图标展示统计结果
-- 🔗 支持批量输入 PR 链接
+- 🔗 支持批量输入 PR 链接或 Commits 链接
 - 📝 支持多种输出格式（Markdown、HTML、JSON）
 - 🎯 自动解析仓库信息和用户名
-- 🌈 根据 PR 数量自动选择图标颜色
+- 🌈 根据贡献数量自动选择图标颜色
 
 ## 输入参数
 
@@ -52,9 +52,10 @@ jobs:
         uses: ./
         with:
           pr-links: |
-            https://github.com/microsoft/vscode/pull/12345
-            https://github.com/facebook/react/pull/67890
-            https://github.com/vercel/next.js/pull/11111
+            https://github.com/vitejs/docs-cn/commits?author=lxKylin
+            https://github.com/vitest-dev/docs-cn/commits?author=lxKylin
+            https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
+            https://github.com/element-plus/element-plus/commits?author=lxKylin
           github-token: ${{ secrets.GITHUB_TOKEN }}
           badge-style: 'flat-square'
           output-format: 'markdown'
@@ -93,9 +94,10 @@ jobs:
         uses: lxKylin/repo-pr-count-action@v1
         with:
           pr-links: |
-            https://github.com/kubernetes/kubernetes/pull/123456
-            https://github.com/golang/go/pull/789012
-            https://github.com/nodejs/node/pull/345678
+            https://github.com/vitejs/docs-cn/commits?author=lxKylin
+            https://github.com/vitest-dev/docs-cn/commits?author=lxKylin
+            https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
+            https://github.com/element-plus/element-plus/commits?author=lxKylin
           github-token: ${{ secrets.GITHUB_TOKEN }}
           badge-style: 'for-the-badge'
           output-format: 'markdown'
@@ -130,7 +132,7 @@ Action 支持多种 PR 链接格式：
 1. **具体的 PR 链接**（推荐）
 
    ```
-   https://github.com/owner/repo/pull/123
+   https://github.com/vitejs/docs-cn/commits?author=lxKylin
    ```
 
 2. **搜索链接**（包含作者信息）
@@ -160,6 +162,10 @@ Action 支持多种 PR 链接格式：
 [![facebook/react PRs](https://img.shields.io/badge/facebook%2Freact-8%20PRs-green?style=flat)](https://github.com/facebook/react)
 
 [![vercel/next.js PRs](https://img.shields.io/badge/vercel%2Fnext.js-2%20PRs-green?style=flat)](https://github.com/vercel/next.js)
+
+[![vitejs/docs-cn PRs](https://img.shields.io/static/v1?label=vitejs%2Fdocs-cn&message=31+PRs&color=orange&style=flat)](https://github.com/vitejs/docs-cn)
+
+[![vitest-dev/docs-cn PRs](https://img.shields.io/static/v1?label=vitest-dev%2Fdocs-cn&message=54+PRs&color=red&style=flat)](https://github.com/vitest-dev/docs-cn)
 ```
 
 ### HTML 格式
@@ -207,6 +213,54 @@ Action 支持多种 PR 链接格式：
 
 ## 开发和贡献
 
+### 本地测试
+
+我们提供了完整的本地测试工具，让您可以在本地验证 Action 的功能：
+
+#### 🚀 快速体验（无需 Token）
+
+```bash
+# 立即查看 Action 效果（使用模拟数据）
+npm run test:demo
+```
+
+这会生成各种格式的演示文件到 `test-output/` 目录。
+
+#### 🧪 完整功能测试（需要 GitHub Token）
+
+1. **获取 GitHub Token**
+   - 访问 [GitHub Settings > Personal access tokens](https://github.com/settings/tokens)
+   - 创建 token 并选择 `public_repo` 权限
+
+2. **运行测试**
+
+   ```bash
+   # 基础测试
+   GITHUB_TOKEN=your_token npm run test:local basic
+
+   # 自定义 PR 链接测试
+   GITHUB_TOKEN=your_token \
+   TEST_PR_LINKS="https://github.com/vitejs/docs-cn/commits?author=lxKylin" \
+   npm run test:local custom
+   ```
+
+3. **查看结果**
+   测试结果会保存在 `test-output/` 目录中，包括：
+   - 生成的图标文件
+   - 详细的 JSON 数据
+   - 完整的测试报告
+
+#### 📋 可用测试
+
+| 测试名称      | 描述           |
+| ------------- | -------------- |
+| `basic`       | 基础功能测试   |
+| `multiFormat` | 多格式输出测试 |
+| `styleTest`   | 图标样式测试   |
+| `custom`      | 自定义配置测试 |
+
+详细的本地测试指南请查看 [test-local/README.md](test-local/README.md)。
+
 ### 本地开发
 
 1. 克隆仓库
@@ -219,18 +273,18 @@ Action 支持多种 PR 链接格式：
 2. 安装依赖
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. 运行测试
 
    ```bash
-   npm test
+   pnpm test test:local
    ```
 
 4. 构建项目
    ```bash
-   npm run build
+   pnpm run build
    ```
 
 ### 项目结构
