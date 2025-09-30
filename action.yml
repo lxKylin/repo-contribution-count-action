@@ -1,6 +1,6 @@
 name: 'Repository PR Count Action'
 description: '统计用户在指定仓库中的 PR 数量并生成图标'
-author: 'liuxin'
+author: 'Kylin'
 
 inputs:
   pr-links:
