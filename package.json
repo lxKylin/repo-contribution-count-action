@@ -1,0 +1,35 @@
+{
+  "name": "repo-pr-count-action",
+  "version": "1.0.0",
+  "description": "GitHub Action for counting user PRs in repositories and generating badges",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/index.js -o dist --source-map --license licenses.txt",
+    "package": "npm run build",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write src/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lxKylin/repo-pr-count-action.git"
+  },
+  "keywords": [
+    "github-action",
+    "pull-request",
+    "statistics",
+    "badge",
+    "pr-count"
+  ],
+  "author": "lxKylin",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.1",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0"
+  }
+}
