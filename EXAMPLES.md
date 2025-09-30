@@ -31,31 +31,37 @@
 
 使用 `generateTableFormat` 方法生成的表格样式：
 
-| 仓库 | PR 数量 | 图标 |
-|------|---------|------|
-| [kubernetes/kubernetes](https://github.com/kubernetes/kubernetes) | 12 | ![kubernetes/kubernetes](https://img.shields.io/badge/kubernetes%2Fkubernetes-12%20PRs-brightgreen?style=flat) |
-| [golang/go](https://github.com/golang/go) | 5 | ![golang/go](https://img.shields.io/badge/golang%2Fgo-5%20PRs-green?style=flat) |
-| [docker/docker](https://github.com/docker/docker) | 3 | ![docker/docker](https://img.shields.io/badge/docker%2Fdocker-3%20PRs-green?style=flat) |
-| **总计** | **20** | ![Total](https://img.shields.io/badge/Total%20PRs-20%20in%203%20repos-yellow?style=flat) |
+| 仓库                                                              | PR 数量 | 图标                                                                                                           |
+| ----------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------- |
+| [kubernetes/kubernetes](https://github.com/kubernetes/kubernetes) | 12      | ![kubernetes/kubernetes](https://img.shields.io/badge/kubernetes%2Fkubernetes-12%20PRs-brightgreen?style=flat) |
+| [golang/go](https://github.com/golang/go)                         | 5       | ![golang/go](https://img.shields.io/badge/golang%2Fgo-5%20PRs-green?style=flat)                                |
+| [docker/docker](https://github.com/docker/docker)                 | 3       | ![docker/docker](https://img.shields.io/badge/docker%2Fdocker-3%20PRs-green?style=flat)                        |
+| **总计**                                                          | **20**  | ![Total](https://img.shields.io/badge/Total%20PRs-20%20in%203%20repos-yellow?style=flat)                       |
 
 ## 示例 3: 不同样式的图标
 
 ### Flat Square 样式
+
 ```yaml
 badge-style: 'flat-square'
 ```
+
 ![Example](https://img.shields.io/badge/example-10%20PRs-brightgreen?style=flat-square)
 
 ### For The Badge 样式
+
 ```yaml
 badge-style: 'for-the-badge'
 ```
+
 ![Example](https://img.shields.io/badge/example-10%20PRs-brightgreen?style=for-the-badge)
 
 ### Social 样式
+
 ```yaml
 badge-style: 'social'
 ```
+
 ![Example](https://img.shields.io/badge/example-10%20PRs-brightgreen?style=social)
 
 ## 示例 4: JSON 输出格式
@@ -96,7 +102,7 @@ badge-style: 'social'
 图标颜色会根据 PR 数量自动调整：
 
 - 🔘 **lightgrey**: 0 个 PR
-- 🟢 **green**: 1-5 个 PR  
+- 🟢 **green**: 1-5 个 PR
 - 🟢 **brightgreen**: 6-15 个 PR
 - 🟡 **yellow**: 16-30 个 PR
 - 🟠 **orange**: 31-50 个 PR
@@ -109,7 +115,7 @@ name: 更新 PR 统计
 
 on:
   schedule:
-    - cron: '0 0 * * 0'  # 每周日更新
+    - cron: '0 0 * * 0' # 每周日更新
   workflow_dispatch:
 
 jobs:
@@ -124,10 +130,8 @@ jobs:
         uses: your-username/repo-pr-count-action@v1
         with:
           pr-links: |
-            https://github.com/microsoft/vscode/pull/123456
-            https://github.com/facebook/react/pull/78901
-            https://github.com/nodejs/node/pull/23456
-            https://github.com/kubernetes/kubernetes/pull/34567
+            https://github.com/vitejs/docs-cn/commits?author=lxKylin
+            https://github.com/vitest-dev/docs-cn/commits?author=lxKylin
           github-token: ${{ secrets.GITHUB_TOKEN }}
           badge-style: 'flat-square'
           output-format: 'markdown'
@@ -137,11 +141,11 @@ jobs:
           # 创建或更新 PR 统计文件
           cat > pr-stats.md << 'EOF'
           # 🚀 我的开源贡献统计
-          
+
           ${{ steps.pr-stats.outputs.badges }}
-          
+
           > ${{ steps.pr-stats.outputs.summary }}
-          
+
           *最后更新时间: $(date "+%Y-%m-%d %H:%M:%S UTC")*
           EOF
 

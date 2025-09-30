@@ -1,7 +1,7 @@
 {
-  "name": "repo-pr-count-action",
+  "name": "repo-contribution-count-action",
   "version": "1.0.0",
-  "description": "GitHub Action for counting user PRs in repositories and generating badges",
+  "description": "一个用于统计用户在指定仓库中PR数量并生成图标的 GitHub Action。",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.js -o dist --source-map --license licenses.txt",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lxKylin/repo-pr-count-action.git"
+    "url": "git+https://github.com/lxKylin/repo-contribution-count-action.git"
   },
   "keywords": [
     "github-action",
