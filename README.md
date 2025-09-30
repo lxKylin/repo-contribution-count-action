@@ -168,6 +168,18 @@ Action 支持多种 PR 链接格式：
 [![vitest-dev/docs-cn PRs](https://img.shields.io/static/v1?label=vitest-dev%2Fdocs-cn&message=54+PRs&color=red&style=flat)](https://github.com/vitest-dev/docs-cn)
 ```
 
+![Total PRs](https://img.shields.io/badge/Total%20PRs-25%20in%203%20repos-brightgreen?style=flat)
+
+[![microsoft/vscode PRs](https://img.shields.io/badge/microsoft%2Fvscode-15%20PRs-brightgreen?style=flat)](https://github.com/microsoft/vscode)
+
+[![facebook/react PRs](https://img.shields.io/badge/facebook%2Freact-8%20PRs-green?style=flat)](https://github.com/facebook/react)
+
+[![vercel/next.js PRs](https://img.shields.io/badge/vercel%2Fnext.js-2%20PRs-green?style=flat)](https://github.com/vercel/next.js)
+
+[![vitejs/docs-cn PRs](https://img.shields.io/static/v1?label=vitejs%2Fdocs-cn&message=31+PRs&color=orange&style=flat)](https://github.com/vitejs/docs-cn)
+
+[![vitest-dev/docs-cn PRs](https://img.shields.io/static/v1?label=vitest-dev%2Fdocs-cn&message=54+PRs&color=red&style=flat)](https://github.com/vitest-dev/docs-cn)
+
 ### HTML 格式
 
 ```html
@@ -175,22 +187,72 @@ Action 支持多种 PR 链接格式：
   src="https://img.shields.io/badge/Total%20PRs-25%20in%203%20repos-brightgreen?style=flat"
   alt="Total PRs"
 />
-<a href="https://github.com/microsoft/vscode"
-  ><img
+<a href="https://github.com/microsoft/vscode">
+  <img
     src="https://img.shields.io/badge/microsoft%2Fvscode-15%20PRs-brightgreen?style=flat"
     alt="microsoft/vscode PRs"
-/></a>
-<a href="https://github.com/facebook/react"
-  ><img
+  />
+</a>
+<a href="https://github.com/facebook/react">
+  <img
     src="https://img.shields.io/badge/facebook%2Freact-8%20PRs-green?style=flat"
     alt="facebook/react PRs"
-/></a>
-<a href="https://github.com/vercel/next.js"
-  ><img
+  />
+</a>
+<a href="https://github.com/vercel/next.js">
+  <img
     src="https://img.shields.io/badge/vercel%2Fnext.js-2%20PRs-green?style=flat"
     alt="vercel/next.js PRs"
-/></a>
+  />
+</a>
+<a href="https://github.com/vitejs/docs-cn">
+  <img
+    src="https://img.shields.io/static/v1?label=vitejs%2Fdocs-cn&message=31+PRs&color=orange&style=flat"
+    alt="vitejs/docs-cn PRs"
+  />
+</a>
+<a href="https://github.com/vitest-dev/docs-cn">
+  <img
+    src="https://img.shields.io/static/v1?label=vitest-dev%2Fdocs-cn&message=54+PRs&color=red&style=flat"
+    alt="vitest-dev/docs-cn PRs"
+  />
+</a>
 ```
+
+<img
+  src="https://img.shields.io/badge/Total%20PRs-25%20in%203%20repos-brightgreen?style=flat"
+  alt="Total PRs"
+/>
+<a href="https://github.com/microsoft/vscode">
+<img
+    src="https://img.shields.io/badge/microsoft%2Fvscode-15%20PRs-brightgreen?style=flat"
+    alt="microsoft/vscode PRs"
+  />
+</a>
+<a href="https://github.com/facebook/react">
+<img
+    src="https://img.shields.io/badge/facebook%2Freact-8%20PRs-green?style=flat"
+    alt="facebook/react PRs"
+  />
+</a>
+<a href="https://github.com/vercel/next.js">
+<img
+    src="https://img.shields.io/badge/vercel%2Fnext.js-2%20PRs-green?style=flat"
+    alt="vercel/next.js PRs"
+  />
+</a>
+<a href="https://github.com/vitejs/docs-cn">
+<img
+    src="https://img.shields.io/static/v1?label=vitejs%2Fdocs-cn&message=31+PRs&color=orange&style=flat"
+    alt="vitejs/docs-cn PRs"
+  />
+</a>
+<a href="https://github.com/vitest-dev/docs-cn">
+<img
+    src="https://img.shields.io/static/v1?label=vitest-dev%2Fdocs-cn&message=54+PRs&color=red&style=flat"
+    alt="vitest-dev/docs-cn PRs"
+  />
+</a>
 
 ### JSON 格式
 
