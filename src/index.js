@@ -1,52 +1,54 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const { PrCounter } = require('./pr-counter');
-const { BadgeGenerator } = require('./badge-generator');
+const core = require('@actions/core')
+const github = require('@actions/github')
+const { PrCounter } = require('./pr-counter')
+const { BadgeGenerator } = require('./badge-generator')
 
 async function run() {
   try {
     // 获取输入参数
-    const prLinks = core.getInput('pr-links', { required: true });
-    const githubToken = core.getInput('github-token', { required: true });
-    const badgeStyle = core.getInput('badge-style') || 'flat';
-    const outputFormat = core.getInput('output-format') || 'markdown';
+    const prLinks = core.getInput('pr-links', { required: true })
+    const githubToken = core.getInput('github-token', { required: true })
+    const badgeStyle = core.getInput('badge-style') || 'flat'
+    const outputFormat = core.getInput('output-format') || 'markdown'
 
-    core.info('开始统计 PR 数量...');
+    core.info('开始统计 PR 数量...')
 
     // 初始化 GitHub API 客户端
-    const octokit = github.getOctokit(githubToken);
+    const octokit = github.getOctokit(githubToken)
 
     // 解析 PR 链接
-    const linksList = prLinks.split('\n').filter(link => link.trim());
-    core.info(`发现 ${linksList.length} 个 PR 链接`);
+    const linksList = prLinks.split('\n').filter((link) => link.trim())
+    core.info(`发现 ${linksList.length} 个 PR 链接`)
 
     // 统计 PR 数量
-    const prCounter = new PrCounter(octokit);
-    const repoCounts = await prCounter.countPRsByRepository(linksList);
+    const prCounter = new PrCounter(octokit)
+    const repoCounts = await prCounter.countPRsByRepository(linksList)
 
-    core.info('PR 统计完成:');
+    core.info('PR 统计完成:')
     for (const [repo, count] of Object.entries(repoCounts)) {
-      core.info(`${repo}: ${count} PRs`);
+      core.info(`${repo}: ${count} PRs`)
     }
 
     // 生成图标
-    const badgeGenerator = new BadgeGenerator(badgeStyle);
-    const badges = badgeGenerator.generateBadges(repoCounts, outputFormat);
+    const badgeGenerator = new BadgeGenerator(badgeStyle)
+    const badges = badgeGenerator.generateBadges(repoCounts, outputFormat)
 
     // 生成摘要
-    const totalPRs = Object.values(repoCounts).reduce((sum, count) => sum + count, 0);
-    const summary = `总计在 ${Object.keys(repoCounts).length} 个仓库中创建了 ${totalPRs} 个 PR`;
+    const totalPRs = Object.values(repoCounts).reduce(
+      (sum, count) => sum + count,
+      0
+    )
+    const summary = `总计在 ${Object.keys(repoCounts).length} 个仓库中创建了 ${totalPRs} 个 PR`
 
     // 设置输出
-    core.setOutput('badges', badges);
-    core.setOutput('summary', summary);
-    core.setOutput('repo-counts', JSON.stringify(repoCounts));
+    core.setOutput('badges', badges)
+    core.setOutput('summary', summary)
+    core.setOutput('repo-counts', JSON.stringify(repoCounts))
 
-    core.info('✅ Action 执行完成!');
-
+    core.info('✅ Action 执行完成!')
   } catch (error) {
-    core.setFailed(`Action 执行失败: ${error.message}`);
+    core.setFailed(`Action 执行失败: ${error.message}`)
   }
 }
 
-run();
+run()
