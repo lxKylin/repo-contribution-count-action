@@ -332,8 +332,8 @@ npm run test:demo
 1. 克隆仓库
 
    ```bash
-   git clone https://github.com/your-username/repo-pr-count-action.git
-   cd repo-pr-count-action
+   git clone https://github.com/lxKylin/repo-contribution-count-action.git
+   cd repo-contribution-count-action
    ```
 
 2. 安装依赖
