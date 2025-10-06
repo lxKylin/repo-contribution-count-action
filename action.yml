@@ -1,4 +1,3 @@
-name: 'Repository PR Count Action'
 name: 'Repository Contribution Count Action'
 description: '统计用户在指定仓库中的 PR 或 Commits 数量并生成图标'
 author: 'Kylin'
