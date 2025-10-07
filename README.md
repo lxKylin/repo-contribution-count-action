@@ -91,7 +91,7 @@ jobs:
 
       - name: Generate PR Statistics
         id: stats
-        uses: lxKylin/repo-contribution-count-action@v1
+        uses: lxKylin/repo-contribution-count-action@main
         with:
           pr-links: |
             https://github.com/vitejs/docs-cn/commits?author=lxKylin
@@ -99,8 +99,8 @@ jobs:
             https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
             https://github.com/element-plus/element-plus/commits?author=lxKylin
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          badge-style: 'for-the-badge'
-          output-format: 'markdown'
+          badge-style: 'flat'
+          output-format: 'html'
 
       echo "开始更新 README.md..."
 
@@ -115,7 +115,7 @@ jobs:
           # 创建临时文件包含新的内容
           cat > temp_stats.md << 'EOF'
           <!-- PR_STATS_START -->
-          ## 🚀 我的开源贡献（由 [repo-contribution-count-action](https://github.com/lxKylin/repo-contribution-count-action) 生成）
+          ### 我的开源贡献（由 [repo-contribution-count-action](https://github.com/lxKylin/repo-contribution-count-action) 生成）
 
           ${{ steps.stats.outputs.badges }}
 
