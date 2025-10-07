@@ -1,0 +1,55 @@
+name: Update Action
+
+# 当代码推送到main分支时自动触发
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 设置Node.js环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 安装pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      # 安装依赖
+      - name: Install dependencies
+        run: pnpm install
+
+      # 构建项目
+      - name: Build project
+        run: pnpm run build
+
+      # 提交构建后的文件
+      - name: Commit built files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dist/
+          git diff --staged --quiet || git commit -m "🚀 Update built action files"
+
+      # 推送更改（仅在main分支push时执行）
+      - name: Push changes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.REPO_PR_TOKEN }}
+          branch: ${{ github.ref }}

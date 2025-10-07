@@ -102,27 +102,90 @@ jobs:
           badge-style: 'for-the-badge'
           output-format: 'markdown'
 
-      - name: Update Profile README
-        run: |
-          # 更新 README.md 中的 PR 统计部分
-          sed -i '/<!-- PR_STATS_START -->/,/<!-- PR_STATS_END -->/c\
-          <!-- PR_STATS_START -->\
-          ## 🚀 我的开源贡献\
-          \
-          ${{ steps.stats.outputs.badges }}\
-          \
-          > ${{ steps.stats.outputs.summary }}\
-          \
-          *最后更新: $(date "+%Y-%m-%d %H:%M:%S")*\
-          <!-- PR_STATS_END -->' README.md
+      echo "开始更新 README.md..."
+
+          # 检查当前目录内容
+          echo "当前目录内容:"
+          ls -la
+
+          # 检查 README.md 是否存在标记
+          echo "检查 README.md 中的标记..."
+          grep -n "PR_STATS" README.md || echo "未找到标记"
+
+          # 创建临时文件包含新的内容
+          cat > temp_stats.md << 'EOF'
+          <!-- PR_STATS_START -->
+          ## 🚀 我的开源贡献（由 [repo-contribution-count-action](https://github.com/lxKylin/repo-contribution-count-action) 生成）
+
+          ${{ steps.stats.outputs.badges }}
+
+          > ${{ steps.stats.outputs.summary }}
+
+          <!-- PR_STATS_END -->
+          EOF
+
+          echo "临时文件内容:"
+          cat temp_stats.md
+
+          # 使用 awk 替换 README.md 中指定部分的内容
+          awk '
+          BEGIN { in_section = 0; found_start = 0 }
+          /<!-- PR_STATS_START -->/ {
+            if (!found_start) {
+              found_start = 1
+              in_section = 1
+              while ((getline line < "temp_stats.md") > 0) {
+                print line
+              }
+              close("temp_stats.md")
+              next
+            }
+          }
+          /<!-- PR_STATS_END -->/ {
+            if (in_section) {
+              in_section = 0
+              next
+            }
+          }
+          !in_section { print }
+          ' README.md > README_new.md
+
+          # 检查文件是否生成成功
+          if [ -f README_new.md ]; then
+            echo "README_new.md 生成成功"
+            echo "文件大小对比:"
+            wc -l README.md README_new.md
+            mv README_new.md README.md
+            echo "README.md 更新完成"
+          else
+            echo "ERROR: README_new.md 生成失败"
+            exit 1
+          fi
+
+          # 清理临时文件
+          rm -f temp_stats.md
+
+          # 显示更新后的文件内容（前20行）
+          echo "更新后的 README.md 前20行:"
+          head -20 README.md
 
       - name: Commit and Push
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add README.md
-          git commit -m "📊 更新 PR 统计数据" || exit 0
-          git push
+          echo "检查文件更改..."
+          git status
+
+          # 检查是否有更改
+          if git diff --quiet README.md; then
+            echo "README.md 没有变化，跳过提交"
+          else
+            echo "README.md 有更改，准备提交..."
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add README.md
+            git commit -m "📊 更新 PR 统计数据 $(date '+%Y-%m-%d %H:%M:%S')"
+            git push
+            echo "提交完成！"
+          fi
 ```
 
 ## 支持的 PR 链接格式
