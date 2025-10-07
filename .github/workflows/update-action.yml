@@ -9,6 +9,11 @@ on:
     branches:
       - main
 
+# 添加必要的权限
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,18 +43,16 @@ jobs:
       - name: Build project
         run: pnpm run build
 
-      # 提交构建后的文件
-      - name: Commit built files
+      # 提交并推送构建后的文件
+      - name: Commit and push built files
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add dist/
-          git diff --staged --quiet || git commit -m "🚀 Update built action files"
-
-      # 推送更改（仅在main分支push时执行）
-      - name: Push changes
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.REPO_PR_TOKEN }}
-          branch: ${{ github.ref }}
+          if ! git diff --staged --quiet; then
+            git commit -m "🚀 Update built action files"
+            git push
+          else
+            echo "No changes to commit"
+          fi
