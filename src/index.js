@@ -10,6 +10,7 @@ async function run() {
     const githubToken = core.getInput('github-token', { required: true })
     const badgeStyle = core.getInput('badge-style') || 'flat'
     const outputFormat = core.getInput('output-format') || 'markdown'
+    const sortByCount = core.getInput('sort-by-count') !== 'false' // 默认为 true，除非明确设置为 'false'
 
     core.info('开始统计贡献数量...')
 
@@ -41,7 +42,8 @@ async function run() {
     const badges = badgeGenerator.generateBadges(
       repoCounts,
       outputFormat,
-      contributionType
+      contributionType,
+      sortByCount
     )
 
     // 生成摘要

@@ -17,6 +17,10 @@ inputs:
     description: '输出格式 (markdown, html, json)'
     required: false
     default: 'markdown'
+  sort-by-count:
+    description: '是否按贡献数量排序 (true/false)'
+    required: false
+    default: 'true'
 
 outputs:
   badges:

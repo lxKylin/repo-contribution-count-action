@@ -1,0 +1,15 @@
+{
+  "testName": "basic",
+  "timestamp": "2025-10-08T03:18:34.799Z",
+  "outputs": {
+    "badges": "![Total PRs](https://img.shields.io/static/v1?label=Total+PRs&message=84+in+3+repos&color=red&style=flat)\n\n[![vitest-dev/docs-cn PRs](https://img.shields.io/static/v1?label=vitest-dev%2Fdocs-cn&message=41+PRs&color=orange&style=flat)](https://github.com/vitest-dev/docs-cn)\n\n[![vitejs/docs-cn PRs](https://img.shields.io/static/v1?label=vitejs%2Fdocs-cn&message=31+PRs&color=orange&style=flat)](https://github.com/vitejs/docs-cn)\n\n[![element-plus/element-plus PRs](https://img.shields.io/static/v1?label=element-plus%2Felement-plus&message=12+PRs&color=brightgreen&style=flat)](https://github.com/element-plus/element-plus)",
+    "summary": "总计在 3 个仓库中创建了 84 个 PR",
+    "repo-counts": "{\"vitejs/docs-cn\":31,\"vitest-dev/docs-cn\":41,\"element-plus/element-plus\":12}"
+  },
+  "repoCounts": {
+    "vitejs/docs-cn": 31,
+    "vitest-dev/docs-cn": 41,
+    "element-plus/element-plus": 12
+  },
+  "success": true
+}

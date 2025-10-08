@@ -34,14 +34,16 @@ if (!fs.existsSync(outputDir)) {
 
 // 测试不同的输出格式和样式
 const testCases = [
-  { format: 'markdown', style: 'flat', filename: 'demo-pr-flat', data: mockRepoCounts, type: 'PRs' },
-  { format: 'markdown', style: 'flat-square', filename: 'demo-pr-flat-square', data: mockRepoCounts, type: 'PRs' },
-  { format: 'markdown', style: 'for-the-badge', filename: 'demo-pr-for-the-badge', data: mockRepoCounts, type: 'PRs' },
-  { format: 'html', style: 'flat', filename: 'demo-pr-html', data: mockRepoCounts, type: 'PRs' },
-  { format: 'json', style: 'flat', filename: 'demo-pr-json', data: mockRepoCounts, type: 'PRs' },
-  { format: 'markdown', style: 'flat', filename: 'demo-commits-flat', data: mockCommitCounts, type: 'commits' },
-  { format: 'html', style: 'flat-square', filename: 'demo-commits-html', data: mockCommitCounts, type: 'commits' },
-  { format: 'json', style: 'flat', filename: 'demo-commits-json', data: mockCommitCounts, type: 'commits' }
+  { format: 'markdown', style: 'flat', filename: 'demo-pr-flat', data: mockRepoCounts, type: 'PRs', sortByCount: true },
+  { format: 'markdown', style: 'flat-square', filename: 'demo-pr-flat-square', data: mockRepoCounts, type: 'PRs', sortByCount: true },
+  { format: 'markdown', style: 'for-the-badge', filename: 'demo-pr-for-the-badge', data: mockRepoCounts, type: 'PRs', sortByCount: true },
+  { format: 'html', style: 'flat', filename: 'demo-pr-html', data: mockRepoCounts, type: 'PRs', sortByCount: true },
+  { format: 'json', style: 'flat', filename: 'demo-pr-json', data: mockRepoCounts, type: 'PRs', sortByCount: true },
+  { format: 'markdown', style: 'flat', filename: 'demo-commits-flat', data: mockCommitCounts, type: 'commits', sortByCount: true },
+  { format: 'html', style: 'flat-square', filename: 'demo-commits-html', data: mockCommitCounts, type: 'commits', sortByCount: true },
+  { format: 'json', style: 'flat', filename: 'demo-commits-json', data: mockCommitCounts, type: 'commits', sortByCount: true },
+  // 测试不排序的情况
+  { format: 'markdown', style: 'flat', filename: 'demo-pr-unsorted', data: mockRepoCounts, type: 'PRs', sortByCount: false }
 ];
 
 console.log('📊 模拟数据:');
@@ -55,11 +57,11 @@ Object.entries(mockCommitCounts).forEach(([repo, count]) => {
 });
 console.log('');
 
-testCases.forEach(({ format, style, filename, data, type }) => {
-  console.log(`🎨 生成 ${format} 格式 (${style} 样式, ${type})...`);
+testCases.forEach(({ format, style, filename, data, type, sortByCount }) => {
+  console.log(`🎨 生成 ${format} 格式 (${style} 样式, ${type}${sortByCount ? ', 按数量排序' : ', 不排序'})...`);
   
   const badgeGenerator = new BadgeGenerator(style);
-  const badges = badgeGenerator.generateBadges(data, format, type);
+  const badges = badgeGenerator.generateBadges(data, format, type, sortByCount);
   
   // 确定文件扩展名
   const ext = format === 'json' ? 'json' : format === 'html' ? 'html' : 'md';
@@ -73,11 +75,27 @@ testCases.forEach(({ format, style, filename, data, type }) => {
 // 生成表格格式
 console.log('\n📋 生成表格格式...');
 const badgeGenerator = new BadgeGenerator('flat');
-const tableFormat = badgeGenerator.generateTableFormat(mockRepoCounts);
+const tableFormat = badgeGenerator.generateTableFormat(mockRepoCounts, 'PRs', true); // 按数量排序
 fs.writeFileSync(path.join(outputDir, 'demo-table.md'), tableFormat);
 console.log(`   ✅ 保存到: ${path.join(outputDir, 'demo-table.md')}`);
 
-// 生成完整报告
+// 生成不排序的表格格式
+const tableFormatUnsorted = badgeGenerator.generateTableFormat(mockRepoCounts, 'PRs', false); // 不排序
+fs.writeFileSync(path.join(outputDir, 'demo-table-unsorted.md'), tableFormatUnsorted);
+console.log(`   ✅ 保存到: ${path.join(outputDir, 'demo-table-unsorted.md')}`);
+
+// 对比排序效果
+console.log('\n🔄 排序效果对比:');
+console.log('按数量排序（高到低）:');
+Object.entries(mockRepoCounts)
+  .sort((a, b) => b[1] - a[1])
+  .forEach(([repo, count]) => {
+    console.log(`   ${repo}: ${count} PRs`);
+  });
+console.log('原始顺序:');
+Object.entries(mockRepoCounts).forEach(([repo, count]) => {
+  console.log(`   ${repo}: ${count} PRs`);
+});
 const report = `# 🚀 GitHub Action 演示报告
 
 ## 测试时间

@@ -6,6 +6,7 @@
 
 - 📊 统计用户在多个仓库中的 PR 或 Commits 数量
 - 🎨 生成美观的图标展示统计结果
+- 🔄 支持按贡献数量排序（高到低）
 - 🔗 支持批量输入 PR 链接或 Commits 链接
 - 📝 支持多种输出格式（Markdown、HTML、JSON）
 - 🎯 自动解析仓库信息和用户名
@@ -19,6 +20,7 @@
 | `github-token`  | ✅   | -          | GitHub token，用于访问 GitHub API                             |
 | `badge-style`   | ❌   | `flat`     | 图标样式（flat, flat-square, plastic, for-the-badge, social） |
 | `output-format` | ❌   | `markdown` | 输出格式（markdown, html, json）                              |
+| `sort-by-count` | ❌   | `true`     | 是否按贡献数量排序（true/false）                              |
 
 ## 输出结果
 
@@ -59,6 +61,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           badge-style: 'flat-square'
           output-format: 'markdown'
+          sort-by-count: 'true'  # 按贡献数量排序
 
       - name: Update README
         run: |
@@ -101,6 +104,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           badge-style: 'flat'
           output-format: 'html'
+          sort-by-count: 'true'  # 按贡献数量排序，在 profile 中显示最有效
 
       echo "开始更新 README.md..."
 
@@ -202,6 +206,35 @@ Action 支持多种 PR 链接格式：
    ```
    https://github.com/owner/repo/pulls?q=is%3Apr+author%3Ausername
    ```
+
+## 图标排序
+
+默认情况下，生成的图标会按贡献数量从高到低排序，让最有价值的贡献置顶显示。
+
+### 排序示例
+
+假设有以下贡献数据：
+- microsoft/vscode: 15 PRs
+- facebook/react: 8 PRs  
+- nodejs/node: 5 PRs
+- kubernetes/kubernetes: 12 PRs
+
+**开启排序（`sort-by-count: true`）**：
+1. microsoft/vscode (15 PRs)
+2. kubernetes/kubernetes (12 PRs)
+3. facebook/react (8 PRs)
+4. nodejs/node (5 PRs)
+
+**关闭排序（`sort-by-count: false`）**：
+1. microsoft/vscode (15 PRs)
+2. facebook/react (8 PRs)
+3. nodejs/node (5 PRs)
+4. kubernetes/kubernetes (12 PRs)
+
+### 使用场景
+
+- **开启排序**：适合个人资料页、项目展示，突出重要贡献
+- **关闭排序**：适合需要保持特定顺序的场景
 
 ## 图标样式
 
