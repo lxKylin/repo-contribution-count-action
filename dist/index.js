@@ -29927,8 +29927,8 @@ function wrappy (fn, cb) {
 
 class BadgeGenerator {
   constructor(style = 'flat') {
-    this.style = style
-    this.baseUrl = 'https://img.shields.io/badge'
+    this.style = style;
+    this.baseUrl = 'https://img.shields.io/badge';
   }
 
   /**
@@ -29941,16 +29941,16 @@ class BadgeGenerator {
   generateBadgeUrl(repoName, count, type = 'PRs') {
     // 使用 shields.io 的动态标签格式来解决特殊字符问题
     // 格式: https://img.shields.io/static/v1?label=LABEL&message=MESSAGE&color=COLOR
-    const color = this.getColorByCount(count)
+    const color = this.getColorByCount(count);
 
     const params = new URLSearchParams({
       label: repoName,
       message: `${count} ${type}`,
       color: color,
       style: this.style
-    })
+    });
 
-    return `https://img.shields.io/static/v1?${params.toString()}`
+    return `https://img.shields.io/static/v1?${params.toString()}`;
   }
 
   /**
@@ -29959,12 +29959,12 @@ class BadgeGenerator {
    * @returns {string} 颜色代码
    */
   getColorByCount(count) {
-    if (count === 0) return 'lightgrey'
-    if (count <= 5) return 'green'
-    if (count <= 15) return 'brightgreen'
-    if (count <= 30) return 'yellow'
-    if (count <= 50) return 'orange'
-    return 'red'
+    if (count === 0) return 'lightgrey';
+    if (count <= 5) return 'green';
+    if (count <= 15) return 'brightgreen';
+    if (count <= 30) return 'yellow';
+    if (count <= 50) return 'orange';
+    return 'red';
   }
 
   /**
@@ -29975,9 +29975,9 @@ class BadgeGenerator {
    * @returns {string} Markdown 格式的图标
    */
   generateMarkdownBadge(repoName, count, type = 'PRs') {
-    const badgeUrl = this.generateBadgeUrl(repoName, count, type)
-    const repoUrl = `https://github.com/${repoName}`
-    return `[![${repoName} ${type}](${badgeUrl})](${repoUrl})`
+    const badgeUrl = this.generateBadgeUrl(repoName, count, type);
+    const repoUrl = `https://github.com/${repoName}`;
+    return `[![${repoName} ${type}](${badgeUrl})](${repoUrl})`;
   }
 
   /**
@@ -29988,9 +29988,9 @@ class BadgeGenerator {
    * @returns {string} HTML 格式的图标
    */
   generateHtmlBadge(repoName, count, type = 'PRs') {
-    const badgeUrl = this.generateBadgeUrl(repoName, count, type)
-    const repoUrl = `https://github.com/${repoName}`
-    return `<a href="${repoUrl}"><img src="${badgeUrl}" alt="${repoName} ${type}"></a>`
+    const badgeUrl = this.generateBadgeUrl(repoName, count, type);
+    const repoUrl = `https://github.com/${repoName}`;
+    return `<a href="${repoUrl}"><img src="${badgeUrl}" alt="${repoName} ${type}"></a>`;
   }
 
   /**
@@ -30003,21 +30003,21 @@ class BadgeGenerator {
     const total = Object.values(repoCounts).reduce(
       (sum, count) => sum + count,
       0
-    )
-    const repoCount = Object.keys(repoCounts).length
+    );
+    const repoCount = Object.keys(repoCounts).length;
 
-    const label = `Total ${type}`
-    const message = `${total} in ${repoCount} repos`
-    const color = this.getColorByCount(total)
+    const label = `Total ${type}`;
+    const message = `${total} in ${repoCount} repos`;
+    const color = this.getColorByCount(total);
 
     const params = new URLSearchParams({
       label: label,
       message: message,
       color: color,
       style: this.style
-    })
+    });
 
-    return `https://img.shields.io/static/v1?${params.toString()}`
+    return `https://img.shields.io/static/v1?${params.toString()}`;
   }
 
   /**
@@ -30028,50 +30028,55 @@ class BadgeGenerator {
    * @param {boolean} sortByCount 是否按数量排序，默认为true
    * @returns {string|Object} 生成的图标内容
    */
-  generateBadges(repoCounts, format = 'markdown', type = 'PRs', sortByCount = true) {
-    const badges = []
+  generateBadges(
+    repoCounts,
+    format = 'markdown',
+    type = 'PRs',
+    sortByCount = true
+  ) {
+    const badges = [];
 
     // 按PR数量进行排序（从高到低）
-    let sortedRepos
+    let sortedRepos;
     if (sortByCount) {
-      sortedRepos = Object.entries(repoCounts).sort((a, b) => b[1] - a[1])
+      sortedRepos = Object.entries(repoCounts).sort((a, b) => b[1] - a[1]);
     } else {
-      sortedRepos = Object.entries(repoCounts)
+      sortedRepos = Object.entries(repoCounts);
     }
 
     // 为每个仓库生成图标
     for (const [repoName, count] of sortedRepos) {
-      let badge
+      let badge;
 
       switch (format.toLowerCase()) {
         case 'html':
-          badge = this.generateHtmlBadge(repoName, count, type)
-          break
+          badge = this.generateHtmlBadge(repoName, count, type);
+          break;
         case 'json':
           badge = {
             repository: repoName,
             count: count,
             badgeUrl: this.generateBadgeUrl(repoName, count, type),
             repoUrl: `https://github.com/${repoName}`
-          }
-          break
+          };
+          break;
         case 'markdown':
         default:
-          badge = this.generateMarkdownBadge(repoName, count, type)
-          break
+          badge = this.generateMarkdownBadge(repoName, count, type);
+          break;
       }
 
-      badges.push(badge)
+      badges.push(badge);
     }
 
     // 添加汇总图标
     if (Object.keys(repoCounts).length > 1) {
-      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts, type)
+      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts, type);
 
       switch (format.toLowerCase()) {
         case 'html':
-          badges.unshift(`<img src="${summaryBadgeUrl}" alt="Total ${type}">`)
-          break
+          badges.unshift(`<img src="${summaryBadgeUrl}" alt="Total ${type}">`);
+          break;
         case 'json':
           badges.unshift({
             repository: 'SUMMARY',
@@ -30081,24 +30086,24 @@ class BadgeGenerator {
             ),
             badgeUrl: summaryBadgeUrl,
             repoUrl: null
-          })
-          break
+          });
+          break;
         case 'markdown':
         default:
-          badges.unshift(`![Total ${type}](${summaryBadgeUrl})`)
-          break
+          badges.unshift(`![Total ${type}](${summaryBadgeUrl})`);
+          break;
       }
     }
 
     // 返回结果
     switch (format.toLowerCase()) {
       case 'json':
-        return JSON.stringify(badges, null, 2)
+        return JSON.stringify(badges, null, 2);
       case 'html':
-        return badges.join('\n')
+        return badges.join('\n');
       case 'markdown':
       default:
-        return badges.join('\n\n')
+        return badges.join('\n\n');
     }
   }
 
@@ -30110,21 +30115,21 @@ class BadgeGenerator {
    * @returns {string} Markdown 表格格式
    */
   generateTableFormat(repoCounts, type = 'PRs', sortByCount = true) {
-    let table = `| 仓库 | ${type} 数量 | 图标 |\n`
-    table += '|------|---------|------|\n'
+    let table = `| 仓库 | ${type} 数量 | 图标 |\n`;
+    table += '|------|---------|------|\n';
 
     // 按PR数量进行排序（从高到低）
-    let sortedRepos
+    let sortedRepos;
     if (sortByCount) {
-      sortedRepos = Object.entries(repoCounts).sort((a, b) => b[1] - a[1])
+      sortedRepos = Object.entries(repoCounts).sort((a, b) => b[1] - a[1]);
     } else {
-      sortedRepos = Object.entries(repoCounts)
+      sortedRepos = Object.entries(repoCounts);
     }
 
     for (const [repoName, count] of sortedRepos) {
-      const badgeUrl = this.generateBadgeUrl(repoName, count, type)
-      const repoUrl = `https://github.com/${repoName}`
-      table += `| [${repoName}](${repoUrl}) | ${count} | ![${repoName}](${badgeUrl}) |\n`
+      const badgeUrl = this.generateBadgeUrl(repoName, count, type);
+      const repoUrl = `https://github.com/${repoName}`;
+      table += `| [${repoName}](${repoUrl}) | ${count} | ![${repoName}](${badgeUrl}) |\n`;
     }
 
     // 添加汇总行
@@ -30132,16 +30137,16 @@ class BadgeGenerator {
       const total = Object.values(repoCounts).reduce(
         (sum, count) => sum + count,
         0
-      )
-      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts, type)
-      table += `| **总计** | **${total}** | ![Total](${summaryBadgeUrl}) |\n`
+      );
+      const summaryBadgeUrl = this.generateSummaryBadge(repoCounts, type);
+      table += `| **总计** | **${total}** | ![Total](${summaryBadgeUrl}) |\n`;
     }
 
-    return table
+    return table;
   }
 }
 
-module.exports = { BadgeGenerator }
+module.exports = { BadgeGenerator };
 
 
 /***/ }),
@@ -30149,11 +30154,11 @@ module.exports = { BadgeGenerator }
 /***/ 1331:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(6966)
+const core = __nccwpck_require__(6966);
 
 class PrCounter {
   constructor(octokit) {
-    this.octokit = octokit
+    this.octokit = octokit;
   }
 
   /**
@@ -30171,36 +30176,36 @@ class PrCounter {
       match,
       owner,
       repo,
-      user = null
+      user = null;
 
     // 尝试匹配 commits 链接
     githubUrlPattern =
-      /https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/commits\?author=([^&]+)/
-    match = link.match(githubUrlPattern)
+      /https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/commits\?author=([^&]+)/;
+    match = link.match(githubUrlPattern);
 
     if (match) {
-      ;[, owner, repo, user] = match
-      return { owner, repo, user, type: 'commits' }
+      [, owner, repo, user] = match;
+      return { owner, repo, user, type: 'commits' };
     }
 
     // 尝试匹配 PR 链接
     githubUrlPattern =
-      /https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/pull(?:s?)\/?(\d*)/
-    match = link.match(githubUrlPattern)
+      /https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/pull(?:s?)\/?(\d*)/;
+    match = link.match(githubUrlPattern);
 
     if (match) {
-      ;[, owner, repo] = match
+      [, owner, repo] = match;
 
       // 从链接中提取用户名（如果是搜索链接）
-      const authorMatch = link.match(/author%3A([^&]+)/)
+      const authorMatch = link.match(/author%3A([^&]+)/);
       if (authorMatch) {
-        user = decodeURIComponent(authorMatch[1])
+        user = decodeURIComponent(authorMatch[1]);
       }
 
-      return { owner, repo, user, type: 'pulls' }
+      return { owner, repo, user, type: 'pulls' };
     }
 
-    throw new Error(`无效的链接格式: ${link}`)
+    throw new Error(`无效的链接格式: ${link}`);
   }
 
   /**
@@ -30216,12 +30221,12 @@ class PrCounter {
         owner,
         repo,
         pull_number: prNumber
-      })
+      });
 
-      return pr.user.login
+      return pr.user.login;
     } catch (error) {
-      core.warning(`获取 PR #${prNumber} 信息失败: ${error.message}`)
-      return null
+      core.warning(`获取 PR #${prNumber} 信息失败: ${error.message}`);
+      return null;
     }
   }
 
@@ -30234,9 +30239,9 @@ class PrCounter {
    */
   async countUserCommitsInRepo(owner, repo, user) {
     try {
-      let page = 1
-      let totalCount = 0
-      let hasMore = true
+      let page = 1;
+      let totalCount = 0;
+      let hasMore = true;
 
       while (hasMore) {
         const { data: commits } = await this.octokit.rest.repos.listCommits({
@@ -30245,28 +30250,28 @@ class PrCounter {
           author: user,
           per_page: 100,
           page: page
-        })
+        });
 
         if (commits.length === 0) {
-          hasMore = false
-          break
+          hasMore = false;
+          break;
         }
 
-        totalCount += commits.length
-        page++
+        totalCount += commits.length;
+        page++;
 
         // 如果当前页面没有满 100 个，说明是最后一页
         if (commits.length < 100) {
-          hasMore = false
+          hasMore = false;
         }
       }
 
-      return totalCount
+      return totalCount;
     } catch (error) {
       core.warning(
         `统计仓库 ${owner}/${repo} 中用户 ${user} 的 commits 失败: ${error.message}`
-      )
-      return 0
+      );
+      return 0;
     }
   }
 
@@ -30279,9 +30284,9 @@ class PrCounter {
    */
   async countUserPRsInRepo(owner, repo, user) {
     try {
-      let page = 1
-      let totalCount = 0
-      let hasMore = true
+      let page = 1;
+      let totalCount = 0;
+      let hasMore = true;
 
       while (hasMore) {
         const { data: pulls } = await this.octokit.rest.pulls.list({
@@ -30290,31 +30295,31 @@ class PrCounter {
           state: 'all',
           per_page: 100,
           page: page
-        })
+        });
 
         if (pulls.length === 0) {
-          hasMore = false
-          break
+          hasMore = false;
+          break;
         }
 
         // 统计当前页面中该用户的 PR 数量
-        const userPRs = pulls.filter((pr) => pr.user.login === user)
-        totalCount += userPRs.length
+        const userPRs = pulls.filter((pr) => pr.user.login === user);
+        totalCount += userPRs.length;
 
-        page++
+        page++;
 
         // 如果当前页面没有满 100 个，说明是最后一页
         if (pulls.length < 100) {
-          hasMore = false
+          hasMore = false;
         }
       }
 
-      return totalCount
+      return totalCount;
     } catch (error) {
       core.warning(
         `统计仓库 ${owner}/${repo} 中用户 ${user} 的 PR 失败: ${error.message}`
-      )
-      return 0
+      );
+      return 0;
     }
   }
 
@@ -30324,60 +30329,60 @@ class PrCounter {
    * @returns {Object} 仓库名到贡献数量的映射
    */
   async countPRsByRepository(links) {
-    const repoCounts = {}
-    const processedRepos = new Set()
+    const repoCounts = {};
+    const processedRepos = new Set();
 
     for (const link of links) {
       try {
-        const { owner, repo, user: linkUser, type } = this.parsePRLink(link)
-        const repoKey = `${owner}/${repo}`
+        const { owner, repo, user: linkUser, type } = this.parsePRLink(link);
+        const repoKey = `${owner}/${repo}`;
 
         // 如果已经处理过这个仓库，跳过
         if (processedRepos.has(repoKey)) {
-          continue
+          continue;
         }
 
-        let user = linkUser
+        let user = linkUser;
 
         // 如果链接中没有用户信息，尝试从具体的 PR 中提取
         if (!user && type === 'pulls') {
-          const prNumberMatch = link.match(/\/pull\/(\d+)/)
+          const prNumberMatch = link.match(/\/pull\/(\d+)/);
           if (prNumberMatch) {
-            const prNumber = parseInt(prNumberMatch[1])
-            user = await this.getPRAuthor(owner, repo, prNumber)
+            const prNumber = parseInt(prNumberMatch[1]);
+            user = await this.getPRAuthor(owner, repo, prNumber);
           }
         }
 
         if (!user) {
-          core.warning(`无法确定链接 ${link} 的用户，跳过此链接`)
-          continue
+          core.warning(`无法确定链接 ${link} 的用户，跳过此链接`);
+          continue;
         }
 
         // 根据链接类型使用相应的统计方法
-        let count
+        let count;
         if (type === 'commits') {
-          core.info(`正在统计仓库 ${repoKey} 中用户 ${user} 的 commits...`)
-          count = await this.countUserCommitsInRepo(owner, repo, user)
+          core.info(`正在统计仓库 ${repoKey} 中用户 ${user} 的 commits...`);
+          count = await this.countUserCommitsInRepo(owner, repo, user);
         } else {
-          core.info(`正在统计仓库 ${repoKey} 中用户 ${user} 的 PR...`)
-          count = await this.countUserPRsInRepo(owner, repo, user)
+          core.info(`正在统计仓库 ${repoKey} 中用户 ${user} 的 PR...`);
+          count = await this.countUserPRsInRepo(owner, repo, user);
         }
 
-        repoCounts[repoKey] = count
-        processedRepos.add(repoKey)
+        repoCounts[repoKey] = count;
+        processedRepos.add(repoKey);
 
         // 添加延迟以避免 API 限制
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
-        core.warning(`处理链接 ${link} 失败: ${error.message}`)
+        core.warning(`处理链接 ${link} 失败: ${error.message}`);
       }
     }
 
-    return repoCounts
+    return repoCounts;
   }
 }
 
-module.exports = { PrCounter }
+module.exports = { PrCounter };
 
 
 /***/ }),
@@ -32294,73 +32299,73 @@ module.exports = parseParams
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-const core = __nccwpck_require__(6966)
-const github = __nccwpck_require__(4903)
-const { PrCounter } = __nccwpck_require__(1331)
-const { BadgeGenerator } = __nccwpck_require__(5145)
+const core = __nccwpck_require__(6966);
+const github = __nccwpck_require__(4903);
+const { PrCounter } = __nccwpck_require__(1331);
+const { BadgeGenerator } = __nccwpck_require__(5145);
 
 async function run() {
   try {
     // 获取输入参数
-    const prLinks = core.getInput('pr-links', { required: true })
-    const githubToken = core.getInput('github-token', { required: true })
-    const badgeStyle = core.getInput('badge-style') || 'flat'
-    const outputFormat = core.getInput('output-format') || 'markdown'
-    const sortByCount = core.getInput('sort-by-count') !== 'false' // 默认为 true，除非明确设置为 'false'
+    const prLinks = core.getInput('pr-links', { required: true });
+    const githubToken = core.getInput('github-token', { required: true });
+    const badgeStyle = core.getInput('badge-style') || 'flat';
+    const outputFormat = core.getInput('output-format') || 'markdown';
+    const sortByCount = core.getInput('sort-by-count') !== 'false'; // 默认为 true，除非明确设置为 'false'
 
-    core.info('开始统计贡献数量...')
+    core.info('开始统计贡献数量...');
 
     // 初始化 GitHub API 客户端
-    const octokit = github.getOctokit(githubToken)
+    const octokit = github.getOctokit(githubToken);
 
     // 解析链接以确定贡献类型
-    const linksList = prLinks.split('\n').filter((link) => link.trim())
-    core.info(`发现 ${linksList.length} 个链接`)
+    const linksList = prLinks.split('\n').filter((link) => link.trim());
+    core.info(`发现 ${linksList.length} 个链接`);
 
     // 检测链接类型
     const isCommitLinks = linksList.some((link) =>
       link.includes('/commits?author=')
-    )
-    const contributionType = isCommitLinks ? 'commits' : 'PRs'
-    core.info(`检测到贡献类型: ${contributionType}`)
+    );
+    const contributionType = isCommitLinks ? 'commits' : 'PRs';
+    core.info(`检测到贡献类型: ${contributionType}`);
 
     // 统计贡献数量
-    const prCounter = new PrCounter(octokit)
-    const repoCounts = await prCounter.countPRsByRepository(linksList)
+    const prCounter = new PrCounter(octokit);
+    const repoCounts = await prCounter.countPRsByRepository(linksList);
 
-    core.info(`${contributionType} 统计完成:`)
+    core.info(`${contributionType} 统计完成:`);
     for (const [repo, count] of Object.entries(repoCounts)) {
-      core.info(`${repo}: ${count} ${contributionType}`)
+      core.info(`${repo}: ${count} ${contributionType}`);
     }
 
     // 生成图标
-    const badgeGenerator = new BadgeGenerator(badgeStyle)
+    const badgeGenerator = new BadgeGenerator(badgeStyle);
     const badges = badgeGenerator.generateBadges(
       repoCounts,
       outputFormat,
       contributionType,
       sortByCount
-    )
+    );
 
     // 生成摘要
     const totalContributions = Object.values(repoCounts).reduce(
       (sum, count) => sum + count,
       0
-    )
-    const summary = `总计在 ${Object.keys(repoCounts).length} 个仓库中创建了 ${totalContributions} 个 ${contributionType}`
+    );
+    const summary = `总计在 ${Object.keys(repoCounts).length} 个仓库中创建了 ${totalContributions} 个 ${contributionType}`;
 
     // 设置输出
-    core.setOutput('badges', badges)
-    core.setOutput('summary', summary)
-    core.setOutput('repo-counts', JSON.stringify(repoCounts))
+    core.setOutput('badges', badges);
+    core.setOutput('summary', summary);
+    core.setOutput('repo-counts', JSON.stringify(repoCounts));
 
-    core.info('✅ Action 执行完成!')
+    core.info('✅ Action 执行完成!');
   } catch (error) {
-    core.setFailed(`Action 执行失败: ${error.message}`)
+    core.setFailed(`Action 执行失败: ${error.message}`);
   }
 }
 
-run()
+run();
 
 module.exports = __webpack_exports__;
 /******/ })()
