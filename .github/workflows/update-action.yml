@@ -51,7 +51,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add dist/
           if ! git diff --staged --quiet; then
-            git commit -m "🚀 Update built action files"
+            git commit -m "feat: Update built action files"
             git push
           else
             echo "No changes to commit"
