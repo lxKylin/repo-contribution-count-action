@@ -30025,13 +30025,22 @@ class BadgeGenerator {
    * @param {Object} repoCounts 仓库贡献统计
    * @param {string} format 输出格式 (markdown, html, json)
    * @param {string} type 贡献类型
+   * @param {boolean} sortByCount 是否按数量排序，默认为true
    * @returns {string|Object} 生成的图标内容
    */
-  generateBadges(repoCounts, format = 'markdown', type = 'PRs') {
+  generateBadges(repoCounts, format = 'markdown', type = 'PRs', sortByCount = true) {
     const badges = []
 
+    // 按PR数量进行排序（从高到低）
+    let sortedRepos
+    if (sortByCount) {
+      sortedRepos = Object.entries(repoCounts).sort((a, b) => b[1] - a[1])
+    } else {
+      sortedRepos = Object.entries(repoCounts)
+    }
+
     // 为每个仓库生成图标
-    for (const [repoName, count] of Object.entries(repoCounts)) {
+    for (const [repoName, count] of sortedRepos) {
       let badge
 
       switch (format.toLowerCase()) {
@@ -30097,13 +30106,22 @@ class BadgeGenerator {
    * 生成自定义样式的表格格式图标
    * @param {Object} repoCounts 仓库贡献统计
    * @param {string} type 贡献类型
+   * @param {boolean} sortByCount 是否按数量排序，默认为true
    * @returns {string} Markdown 表格格式
    */
-  generateTableFormat(repoCounts, type = 'PRs') {
+  generateTableFormat(repoCounts, type = 'PRs', sortByCount = true) {
     let table = `| 仓库 | ${type} 数量 | 图标 |\n`
     table += '|------|---------|------|\n'
 
-    for (const [repoName, count] of Object.entries(repoCounts)) {
+    // 按PR数量进行排序（从高到低）
+    let sortedRepos
+    if (sortByCount) {
+      sortedRepos = Object.entries(repoCounts).sort((a, b) => b[1] - a[1])
+    } else {
+      sortedRepos = Object.entries(repoCounts)
+    }
+
+    for (const [repoName, count] of sortedRepos) {
       const badgeUrl = this.generateBadgeUrl(repoName, count, type)
       const repoUrl = `https://github.com/${repoName}`
       table += `| [${repoName}](${repoUrl}) | ${count} | ![${repoName}](${badgeUrl}) |\n`
@@ -32288,6 +32306,7 @@ async function run() {
     const githubToken = core.getInput('github-token', { required: true })
     const badgeStyle = core.getInput('badge-style') || 'flat'
     const outputFormat = core.getInput('output-format') || 'markdown'
+    const sortByCount = core.getInput('sort-by-count') !== 'false' // 默认为 true，除非明确设置为 'false'
 
     core.info('开始统计贡献数量...')
 
@@ -32319,7 +32338,8 @@ async function run() {
     const badges = badgeGenerator.generateBadges(
       repoCounts,
       outputFormat,
-      contributionType
+      contributionType,
+      sortByCount
     )
 
     // 生成摘要
