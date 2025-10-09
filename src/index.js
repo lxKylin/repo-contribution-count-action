@@ -7,6 +7,9 @@ async function run() {
   try {
     // 获取输入参数
     const prLinks = core.getInput('pr-links', { required: true });
+
+    core.info('prLinks', prLinks);
+
     const githubToken = core.getInput('github-token', { required: true });
     const badgeStyle = core.getInput('badge-style') || 'flat';
     const outputFormat = core.getInput('output-format') || 'markdown';
@@ -19,7 +22,8 @@ async function run() {
 
     // 解析链接以确定贡献类型
     const linksList = prLinks.split('\n').filter((link) => link.trim());
-    core.info(`发现 ${linksList.length} 个链接`);
+
+    core.info(`发现 ${linksList.length} 个链接, ${linksList}`);
 
     // 检测链接类型
     const isCommitLinks = linksList.some((link) =>

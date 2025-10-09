@@ -32,55 +32,15 @@
 
 ## 使用示例
 
-### 基础用法
-
-```yaml
-name: Update PR Badges
-
-on:
-  schedule:
-    - cron: '0 0 * * 0' # 每周更新一次
-  workflow_dispatch: # 支持手动触发
-
-jobs:
-  update-badges:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Count PRs and Generate Badges
-        id: pr-count
-        uses: ./
-        with:
-          pr-links: |
-            https://github.com/vitejs/docs-cn/commits?author=lxKylin
-            https://github.com/vitest-dev/docs-cn/commits?author=lxKylin
-            https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
-            https://github.com/element-plus/element-plus/commits?author=lxKylin
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          badge-style: 'flat-square'
-          output-format: 'markdown'
-          sort-by-count: 'true'  # 按贡献数量排序
-
-      - name: Update README
-        run: |
-          echo "## 我的 PR 统计" >> PR_STATS.md
-          echo "" >> PR_STATS.md
-          echo "${{ steps.pr-count.outputs.badges }}" >> PR_STATS.md
-          echo "" >> PR_STATS.md
-          echo "📈 ${{ steps.pr-count.outputs.summary }}" >> PR_STATS.md
-```
-
-### 高级用法 - 自动更新个人资料
+### 自动更新个人资料
 
 ```yaml
 name: Update Profile PR Stats
 
 on:
   schedule:
-    - cron: '0 6 * * 1' # 每周一早上 6 点更新
-  workflow_dispatch:
+    - cron: '0 16 * * *' # 每日北京时间晚上12点更新 (UTC+8，所以是UTC 16:00)
+  workflow_dispatch: # 允许手动触发
 
 jobs:
   update-profile:
@@ -90,7 +50,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: your-username/your-username
-          token: ${{ secrets.PROFILE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate PR Statistics
         id: stats
@@ -104,9 +64,11 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           badge-style: 'flat'
           output-format: 'html'
-          sort-by-count: 'true'  # 按贡献数量排序，在 profile 中显示最有效
+          sort-by-count: 'true' # 按贡献数量排序
 
-      echo "开始更新 README.md..."
+      - name: Update Profile README
+        run: |
+          echo "开始更新 README.md..."
 
           # 检查当前目录内容
           echo "当前目录内容:"
@@ -186,11 +148,16 @@ jobs:
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
             git add README.md
-            git commit -m "📊 更新 PR 统计数据 $(date '+%Y-%m-%d %H:%M:%S')"
+            git commit -m "docs: 更新 PR 统计数据 $(date '+%Y-%m-%d %H:%M:%S')"
             git push
             echo "提交完成！"
           fi
 ```
+
+#### ⚠️ 注意
+
+- 需要在你的 `profile-repo` 的 `README.md` 文件中添加以下标记：`<!-- PR_STATS_START -->` 和 `<!-- PR_STATS_END -->`，添加后，才能将 PR 统计数据插入到标记之间。
+- 如果不理解，可以参考我的 [示例](https://github.com/lxKylin/lxKylin)
 
 ## 支持的 PR 链接格式
 
@@ -204,7 +171,7 @@ Action 支持多种 PR 链接格式：
 
 2. **搜索链接**（包含作者信息）
    ```
-   https://github.com/owner/repo/pulls?q=is%3Apr+author%3Ausername
+   https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
    ```
 
 ## 图标排序
@@ -214,18 +181,21 @@ Action 支持多种 PR 链接格式：
 ### 排序示例
 
 假设有以下贡献数据：
+
 - microsoft/vscode: 15 PRs
-- facebook/react: 8 PRs  
+- facebook/react: 8 PRs
 - nodejs/node: 5 PRs
 - kubernetes/kubernetes: 12 PRs
 
 **开启排序（`sort-by-count: true`）**：
+
 1. microsoft/vscode (15 PRs)
 2. kubernetes/kubernetes (12 PRs)
 3. facebook/react (8 PRs)
 4. nodejs/node (5 PRs)
 
 **关闭排序（`sort-by-count: false`）**：
+
 1. microsoft/vscode (15 PRs)
 2. facebook/react (8 PRs)
 3. nodejs/node (5 PRs)
@@ -379,7 +349,11 @@ Action 支持多种 PR 链接格式：
 
 我们提供了完整的本地测试工具，让您可以在本地验证 Action 的功能：
 
-#### 🚀 快速体验（无需 Token）
+```bash
+pnpm test:local
+```
+
+### 🚀 快速体验（无需 Token）
 
 ```bash
 # 立即查看 Action 效果（使用模拟数据）
@@ -460,7 +434,6 @@ npm run test:demo
 │   ├── pr-counter.js      # PR 统计逻辑
 │   └── badge-generator.js # 图标生成逻辑
 ├── dist/                  # 构建输出目录
-├── __tests__/             # 测试文件目录
 └── README.md              # 项目文档
 ```
 

@@ -7,6 +7,7 @@
     "build": "ncc build src/index.js -o dist --source-map --license licenses.txt",
     "test:local": "node test-local/index.js",
     "test:quick": "node test-local/quick-test.js",
+    "test:demo": "npm run test:quick",
     "package": "pnpm run build",
     "lint": "eslint src/**/*.js",
     "format": "prettier --write src/**/*.js"

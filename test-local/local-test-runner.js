@@ -74,34 +74,46 @@ async function runLocalTest(testConfig) {
     mockCore.setInput('output-format', testConfig.outputFormat || 'markdown');
 
     console.log('📝 测试配置:');
-    console.log(`   PR 链接数量: ${testConfig.prLinks.split('\n').filter(l => l.trim()).length}`);
+    console.log(
+      `   PR 链接数量: ${testConfig.prLinks.split('\n').filter((l) => l.trim()).length}`
+    );
     console.log(`   图标样式: ${testConfig.badgeStyle || 'flat'}`);
     console.log(`   输出格式: ${testConfig.outputFormat || 'markdown'}\n`);
 
     // 模拟 GitHub API 调用（使用真实的 API）
     const octokit = github.getOctokit(testConfig.githubToken);
-    
+
     // 解析 PR 链接
-    const linksList = testConfig.prLinks.split('\n').filter(link => link.trim());
+    const linksList = testConfig.prLinks
+      .split('\n')
+      .filter((link) => link.trim());
     mockCore.info(`发现 ${linksList.length} 个 PR 链接`);
-    
+
+    console.log('linksList', linksList);
+
     // 统计 PR 数量
     const prCounter = new PrCounter(octokit);
     const repoCounts = await prCounter.countPRsByRepository(linksList);
-    
+
     mockCore.info('PR 统计完成:');
     for (const [repo, count] of Object.entries(repoCounts)) {
       mockCore.info(`${repo}: ${count} PRs`);
     }
-    
+
     // 生成图标
     const badgeGenerator = new BadgeGenerator(testConfig.badgeStyle || 'flat');
-    const badges = badgeGenerator.generateBadges(repoCounts, testConfig.outputFormat || 'markdown');
-    
+    const badges = badgeGenerator.generateBadges(
+      repoCounts,
+      testConfig.outputFormat || 'markdown'
+    );
+
     // 生成摘要
-    const totalPRs = Object.values(repoCounts).reduce((sum, count) => sum + count, 0);
+    const totalPRs = Object.values(repoCounts).reduce(
+      (sum, count) => sum + count,
+      0
+    );
     const summary = `总计在 ${Object.keys(repoCounts).length} 个仓库中创建了 ${totalPRs} 个 PR`;
-    
+
     // 设置输出
     mockCore.setOutput('badges', badges);
     mockCore.setOutput('summary', summary);
@@ -114,7 +126,6 @@ async function runLocalTest(testConfig) {
       logs: mockCore.getLogs(),
       repoCounts
     };
-
   } catch (error) {
     mockCore.setFailed(`测试执行失败: ${error.message}`);
     return {

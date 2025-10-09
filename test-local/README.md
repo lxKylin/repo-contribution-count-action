@@ -107,7 +107,7 @@ https://github.com/my/repo2/pull/456`,
     badgeStyle: 'flat-square',
     outputFormat: 'markdown'
   }
-}
+};
 ```
 
 然后运行：
@@ -202,6 +202,7 @@ npm run test:local custom
    - 确保链接可以访问
 
 3. **Token 权限不足**
+
    ```
    Error: Bad credentials
    ```
