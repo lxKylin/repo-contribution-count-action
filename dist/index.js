@@ -30235,9 +30235,10 @@ class PrCounter {
    * @param {string} owner 仓库所有者
    * @param {string} repo 仓库名
    * @param {string} user 用户名
+   * @param {boolean} includeMergeCommits 是否包含Merge commits（默认true）
    * @returns {number} Commits 数量
    */
-  async countUserCommitsInRepo(owner, repo, user) {
+  async countUserCommitsInRepo(owner, repo, user, includeMergeCommits = true) {
     try {
       let page = 1;
       let totalCount = 0;
@@ -30257,7 +30258,14 @@ class PrCounter {
           break;
         }
 
-        totalCount += commits.length;
+        // 根据配置决定是否包含Merge commits
+        const filteredCommits = includeMergeCommits
+          ? commits
+          : commits.filter(
+              (commit) => !commit.commit.message.startsWith('Merge')
+            );
+
+        totalCount += filteredCommits.length;
         page++;
 
         // 如果当前页面没有满 100 个，说明是最后一页
@@ -30326,9 +30334,10 @@ class PrCounter {
   /**
    * 根据链接列表统计各仓库的贡献数量（支持 PR 和 commits）
    * @param {string[]} links 链接列表
+   * @param {boolean} includeMergeCommits 是否包含Merge commits
    * @returns {Object} 仓库名到贡献数量的映射
    */
-  async countPRsByRepository(links) {
+  async countPRsByRepository(links, includeMergeCommits = true) {
     const repoCounts = {};
     const processedRepos = new Set();
 
@@ -30336,7 +30345,7 @@ class PrCounter {
       try {
         const { owner, repo, user: linkUser, type } = this.parsePRLink(link);
         const repoKey = `${owner}/${repo}`;
-
+        console.log('type', type, link);
         // 如果已经处理过这个仓库，跳过
         if (processedRepos.has(repoKey)) {
           continue;
@@ -30362,7 +30371,12 @@ class PrCounter {
         let count;
         if (type === 'commits') {
           core.info(`正在统计仓库 ${repoKey} 中用户 ${user} 的 commits...`);
-          count = await this.countUserCommitsInRepo(owner, repo, user);
+          count = await this.countUserCommitsInRepo(
+            owner,
+            repo,
+            user,
+            includeMergeCommits
+          );
         } else {
           core.info(`正在统计仓库 ${repoKey} 中用户 ${user} 的 PR...`);
           count = await this.countUserPRsInRepo(owner, repo, user);
@@ -32315,6 +32329,8 @@ async function run() {
     const badgeStyle = core.getInput('badge-style') || 'flat';
     const outputFormat = core.getInput('output-format') || 'markdown';
     const sortByCount = core.getInput('sort-by-count') !== 'false'; // 默认为 true，除非明确设置为 'false'
+    const includeMergeCommits =
+      core.getInput('include-merge-commits') !== 'false'; // 默认为 true
 
     core.info('开始统计贡献数量...');
 
@@ -32335,7 +32351,10 @@ async function run() {
 
     // 统计贡献数量
     const prCounter = new PrCounter(octokit);
-    const repoCounts = await prCounter.countPRsByRepository(linksList);
+    const repoCounts = await prCounter.countPRsByRepository(
+      linksList,
+      includeMergeCommits
+    );
 
     core.info(`${contributionType} 统计完成:`);
     for (const [repo, count] of Object.entries(repoCounts)) {
