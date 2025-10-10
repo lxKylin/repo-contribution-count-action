@@ -21,6 +21,10 @@ inputs:
     description: '是否按贡献数量排序 (true/false)'
     required: false
     default: 'true'
+  include-merge-commits:
+    description: '是否包含Merge commits (true/false)'
+    required: false
+    default: 'true'
 
 outputs:
   badges:

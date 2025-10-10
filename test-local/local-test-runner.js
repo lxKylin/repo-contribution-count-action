@@ -72,13 +72,27 @@ async function runLocalTest(testConfig) {
     mockCore.setInput('github-token', testConfig.githubToken);
     mockCore.setInput('badge-style', testConfig.badgeStyle || 'flat');
     mockCore.setInput('output-format', testConfig.outputFormat || 'markdown');
+    mockCore.setInput(
+      'sort-by-count',
+      testConfig.sortByCount !== false ? 'true' : 'false'
+    );
+    mockCore.setInput(
+      'include-merge-commits',
+      testConfig.includeMergeCommits !== false ? 'true' : 'false'
+    );
 
     console.log('📝 测试配置:');
     console.log(
       `   PR 链接数量: ${testConfig.prLinks.split('\n').filter((l) => l.trim()).length}`
     );
     console.log(`   图标样式: ${testConfig.badgeStyle || 'flat'}`);
-    console.log(`   输出格式: ${testConfig.outputFormat || 'markdown'}\n`);
+    console.log(`   输出格式: ${testConfig.outputFormat || 'markdown'}`);
+    console.log(
+      `   排序方式: ${testConfig.sortByCount !== false ? '按数量排序' : '保持原顺序'}`
+    );
+    console.log(
+      `   Merge Commits: ${testConfig.includeMergeCommits !== false ? '包含' : '排除'}\n`
+    );
 
     // 模拟 GitHub API 调用（使用真实的 API）
     const octokit = github.getOctokit(testConfig.githubToken);
@@ -93,7 +107,11 @@ async function runLocalTest(testConfig) {
 
     // 统计 PR 数量
     const prCounter = new PrCounter(octokit);
-    const repoCounts = await prCounter.countPRsByRepository(linksList);
+    const includeMergeCommits = testConfig.includeMergeCommits !== false;
+    const repoCounts = await prCounter.countPRsByRepository(
+      linksList,
+      includeMergeCommits
+    );
 
     mockCore.info('PR 统计完成:');
     for (const [repo, count] of Object.entries(repoCounts)) {
@@ -102,9 +120,12 @@ async function runLocalTest(testConfig) {
 
     // 生成图标
     const badgeGenerator = new BadgeGenerator(testConfig.badgeStyle || 'flat');
+    const sortByCount = testConfig.sortByCount !== false;
     const badges = badgeGenerator.generateBadges(
       repoCounts,
-      testConfig.outputFormat || 'markdown'
+      testConfig.outputFormat || 'markdown',
+      'PRs', // 默认类型
+      sortByCount
     );
 
     // 生成摘要

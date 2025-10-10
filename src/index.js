@@ -14,6 +14,8 @@ async function run() {
     const badgeStyle = core.getInput('badge-style') || 'flat';
     const outputFormat = core.getInput('output-format') || 'markdown';
     const sortByCount = core.getInput('sort-by-count') !== 'false'; // 默认为 true，除非明确设置为 'false'
+    const includeMergeCommits =
+      core.getInput('include-merge-commits') !== 'false'; // 默认为 true
 
     core.info('开始统计贡献数量...');
 
@@ -34,7 +36,10 @@ async function run() {
 
     // 统计贡献数量
     const prCounter = new PrCounter(octokit);
-    const repoCounts = await prCounter.countPRsByRepository(linksList);
+    const repoCounts = await prCounter.countPRsByRepository(
+      linksList,
+      includeMergeCommits
+    );
 
     core.info(`${contributionType} 统计完成:`);
     for (const [repo, count] of Object.entries(repoCounts)) {

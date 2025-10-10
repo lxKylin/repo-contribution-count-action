@@ -14,13 +14,14 @@
 
 ## 输入参数
 
-| 参数名          | 必需 | 默认值     | 说明                                                          |
-| --------------- | ---- | ---------- | ------------------------------------------------------------- |
-| `pr-links`      | ✅   | -          | PR 链接列表，用换行符分隔                                     |
-| `github-token`  | ✅   | -          | GitHub token，用于访问 GitHub API                             |
-| `badge-style`   | ❌   | `flat`     | 图标样式（flat, flat-square, plastic, for-the-badge, social） |
-| `output-format` | ❌   | `markdown` | 输出格式（markdown, html, json）                              |
-| `sort-by-count` | ❌   | `true`     | 是否按贡献数量排序（true/false）                              |
+| 参数名                  | 必需 | 默认值     | 说明                                                          |
+| ----------------------- | ---- | ---------- | ------------------------------------------------------------- |
+| `pr-links`              | ✅   | -          | PR 链接列表，用换行符分隔                                     |
+| `github-token`          | ✅   | -          | GitHub token，用于访问 GitHub API                             |
+| `badge-style`           | ❌   | `flat`     | 图标样式（flat, flat-square, plastic, for-the-badge, social） |
+| `output-format`         | ❌   | `markdown` | 输出格式（markdown, html, json）                              |
+| `sort-by-count`         | ❌   | `true`     | 是否按贡献数量排序（true/false）                              |
+| `include-merge-commits` | ❌   | `true`     | 是否包含Merge commits（true/false）                           |
 
 ## 输出结果
 
@@ -65,6 +66,7 @@ jobs:
           badge-style: 'flat'
           output-format: 'html'
           sort-by-count: 'true' # 按贡献数量排序
+          include-merge-commits: 'false' # 排除Merge commits，更接近GitHub页面显示
 
       - name: Update Profile README
         run: |
@@ -169,7 +171,7 @@ Action 支持多种 PR 链接格式：
    https://github.com/vitejs/docs-cn/commits?author=lxKylin
    ```
 
-2. **搜索链接**（包含作者信息）
+2. **搜索链接**（这个不一定准确，会包含一些`closed`的PR，如果说你希望也统计`closed`的PR，那么使用这种链接是对的，如果要求准确，建议使用第一种链接）
    ```
    https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
    ```
@@ -205,6 +207,48 @@ Action 支持多种 PR 链接格式：
 
 - **开启排序**：适合个人资料页、项目展示，突出重要贡献
 - **关闭排序**：适合需要保持特定顺序的场景
+
+## Merge Commits 处理
+
+Action 支持灵活处理 Merge commits，这对于匹配 GitHub 页面显示非常有用。
+
+### 问题背景
+
+在实际使用中，你可能会发现 Action 统计的数量与 GitHub 页面显示不一致：
+
+- **Action 统计**：61 commits
+- **GitHub 页面**：40 commits
+
+### 原因分析
+
+这种差异主要是因为：
+
+1. **API 覆盖范围**：GitHub API 返回所有分支的所有 commits
+2. **页面过滤**：GitHub 页面可能过滤了 Merge commits 或有显示限制
+3. **Merge commits**：自动包含了大量的 Merge commits
+
+### 解决方案
+
+使用 `include-merge-commits` 参数来控制是否包含 Merge commits：
+
+```yaml
+# 包含 Merge commits（默认）
+include-merge-commits: 'true'   # 统计所有 commits
+
+# 排除 Merge commits（更接近 GitHub 页面）
+include-merge-commits: 'false'  # 只统计普通 commits
+```
+
+### 对比示例
+
+以 `vitest-dev/docs-cn` 仓库为例：
+
+| 配置                           | 结果       | 说明                                         |
+| ------------------------------ | ---------- | -------------------------------------------- |
+| `include-merge-commits: true`  | 61 commits | 包含 22 个 Merge commits + 39 个普通 commits |
+| `include-merge-commits: false` | 39 commits | 只包含普通 commits，更接近 GitHub 页面显示   |
+
+**建议**：如果希望统计结果与 GitHub 页面一致，请设置 `include-merge-commits: false`。
 
 ## 图标样式
 

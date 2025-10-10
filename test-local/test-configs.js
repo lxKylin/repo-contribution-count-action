@@ -6,8 +6,7 @@ const testConfigs = {
     name: '基础功能测试',
     description: '使用公开的 PR 链接测试基本功能',
     prLinks: `https://github.com/vitejs/docs-cn/commits?author=lxKylin
-    https://github.com/vitest-dev/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
-    https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin
+    https://github.com/vitest-dev/docs-cn/commits?author=lxKylin
     https://github.com/element-plus/element-plus/commits?author=lxKylin`,
     badgeStyle: 'flat',
     outputFormat: 'markdown'
@@ -27,7 +26,8 @@ const testConfigs = {
     name: '图标样式测试',
     description: '测试不同的图标样式',
     prLinks: `https://github.com/vitejs/docs-cn/commits?author=lxKylin
-https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin+`,
+    https://github.com/vitest-dev/docs-cn/commits?author=lxKylin
+    `,
     badgeStyle: 'for-the-badge',
     outputFormat: 'html'
   },
@@ -46,7 +46,7 @@ https://github.com/vitejs/docs-cn/pulls?q=is%3Apr+author%3AlxKylin+`,
     name: 'Commits 统计测试',
     description: '测试 commits 链接的解析和统计',
     prLinks: `https://github.com/vitejs/docs-cn/commits?author=lxKylin
-https://github.com/microsoft/vscode/commits?author=microsoft`,
+https://github.com/vitest-dev/docs-cn/commits?author=lxKylin`,
     badgeStyle: 'flat',
     outputFormat: 'markdown'
   },
@@ -59,7 +59,17 @@ https://github.com/microsoft/vscode/commits?author=microsoft`,
       `https://github.com/vitejs/docs-cn/commits?author=lxKylin`,
     badgeStyle: process.env.BADGE_STYLE || 'flat',
     outputFormat: process.env.OUTPUT_FORMAT || 'markdown'
-  }
-}
+  },
 
-module.exports = testConfigs
+  // 测试排除Merge commits功能
+  excludeMerge: {
+    name: '排除Merge Commits测试',
+    description: '测试排除Merge commits后的统计结果',
+    prLinks: `https://github.com/vitest-dev/docs-cn/commits?author=lxKylin`,
+    badgeStyle: 'flat',
+    outputFormat: 'markdown',
+    includeMergeCommits: false // 新参数
+  }
+};
+
+module.exports = testConfigs;
